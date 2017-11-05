@@ -1,4 +1,5 @@
 import FWCore.ParameterSet.Config as cms
+from Configuration.StandardSequences.Eras import eras
 
 # Irene commented cambridge achen stuff!
 #isDebug = True
@@ -12,7 +13,7 @@ else:
     met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS") #,"slimmedMETsMuEGClean"
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
-fatjet_ptmin = 150.0
+fatjet_ptmin = 50.0
 #fatjet_ptmin = 10.0 #TEST
 
 bTagDiscriminators = [
@@ -35,7 +36,7 @@ bTagInfos = [
    ,'softPFElectronsTagInfos'
 ]
 
-process = cms.Process("USER")
+process = cms.Process("USER",eras.Phase2)
 
 task = cms.Task()
 
@@ -65,7 +66,8 @@ if isDebug:
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-'file:/nfs/dust/cms/user/zoiirene/UpgradeStudiesGtoWW/framework93X/new932/CMSSW_9_3_2/src/00E3ABFD-22B7-E711-B972-002590D9D89C.root'
+#'file:/nfs/dust/cms/user/zoiirene/UpgradeStudiesGtoWW/framework93X/new932/CMSSW_9_3_2/src/00E3ABFD-22B7-E711-B972-002590D9D89C.root'
+'file:0AEA0220-0FBE-E711-A36C-A0369FD20608.root'
 #'/store/mc/PhaseIITDRFall17MiniAOD/VBF_BulkGravToWW_narrow_M-2000_14TeV-madgraph/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/150000/00E3ABFD-22B7-E711-B972-002590D9D89C.root',
 #'/store/mc/PhaseIITDRFall17MiniAOD/VBF_BulkGravToWW_narrow_M-2000_14TeV-madgraph/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/150000/04A4B67D-74B6-E711-8D23-D4AE526A0D2E.root',
 #'/store/mc/PhaseIITDRFall17MiniAOD/VBF_BulkGravToWW_narrow_M-2000_14TeV-madgraph/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/150000/38B6C65C-ACB7-E711-8639-484D7E8DF06B.root',
@@ -82,7 +84,7 @@ process.source = cms.Source("PoolSource",
   skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -304,6 +306,7 @@ process.load('CommonTools/PileupAlgos/Puppi_cff')
 process.puppi.candName = cms.InputTag('packedPFCandidates')
 process.puppi.vertexName = cms.InputTag('offlineSlimmedPrimaryVertices')
 process.puppi.clonePackedCands   = cms.bool(True)
+process.puppi.PtMaxNeutrals = -1
 task.add(process.puppi)
 
 #process.ca15PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('puppi'), jetPtMin = fatjet_ptmin, jetAlgorithm = cms.string("CambridgeAachen"), rParam = 1.5, R0 = 1.5, zcut = cms.double(0.2), beta = cms.double(1.0)) #irene commented
@@ -816,7 +819,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         
         doJets = cms.bool(True),
         #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
-        jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi","slimmedJetsAK8"),
+        jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi","slimmedJetsAK8","patJetsAk8PuppiJetsFat"),
         #jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi","patJetsAK8PFPUPPI","patJetsAK8PFCHS"),
         jet_ptmin = cms.double(10.0),
         jet_etamax = cms.double(999.0),
